@@ -9,25 +9,13 @@
 </head>
 <body>
 
-<!-- SETUP MODAL (first-time API key entry) -->
-<div id="setup-modal" class="modal-overlay hidden">
-  <div class="modal">
-    <h2>Welcome, Patrick 👋</h2>
-    <p>To power the AI job search, please enter your Anthropic API key. It will be stored only in your browser (never sent anywhere except Anthropic).</p>
-    <label>Anthropic API Key</label>
-    <input type="password" id="api-key-input" placeholder="sk-ant-..." />
-    <button class="btn-primary" onclick="saveApiKey()">Save & Continue</button>
-    <p class="hint">Don't have one? <a href="https://console.anthropic.com" target="_blank">Get it free at console.anthropic.com</a></p>
-  </div>
-</div>
-
 <!-- HEADER -->
 <header>
   <div class="header-inner">
     <div class="header-logo">
       <span class="logo-icon">PK</span>
       <div>
-        <div class="header-title">Luxury GM Job Tracker</div>
+        <div class="header-title">Luxury GM Job Search</div>
         <div class="header-sub">Patrick Krüger · General Manager</div>
       </div>
     </div>
@@ -35,286 +23,237 @@
       <button class="tab-btn active" onclick="showTab('search')">🔍 Search</button>
       <button class="tab-btn" onclick="showTab('alerts')">📬 Daily Alerts</button>
       <button class="tab-btn" onclick="showTab('tracker')">📋 Tracker</button>
-      <button class="tab-btn settings-btn" onclick="showTab('settings')" title="Settings">⚙️</button>
+      <button class="tab-btn" onclick="showTab('settings')">⚙️</button>
     </nav>
   </div>
 </header>
 
 <main>
 
-<!-- ═══════════════════════════════════════════════
+<!-- ══════════════════════════════
      TAB 1: SEARCH
-═══════════════════════════════════════════════ -->
+══════════════════════════════ -->
 <section id="tab-search" class="tab-section active">
   <div class="section-header">
     <h1>Search Opportunities</h1>
-    <p>AI-powered search across luxury hotel brands worldwide</p>
+    <p>Choose your filters — each button opens a live LinkedIn search or brand career page in a new tab</p>
   </div>
 
-  <div class="filter-bar card">
+  <!-- Filters -->
+  <div class="card filter-card">
     <div class="filter-row">
-
       <div class="filter-group">
-        <label>Hotel Group</label>
-        <select id="filter-group" multiple size="5">
-          <optgroup label="Marriott Luxury">
-            <option value="Ritz-Carlton">The Ritz-Carlton</option>
-            <option value="St. Regis">St. Regis</option>
-            <option value="W Hotels">W Hotels</option>
-            <option value="EDITION Hotels">EDITION Hotels</option>
-            <option value="JW Marriott">JW Marriott</option>
-            <option value="Marriott">Marriott International</option>
-          </optgroup>
-          <optgroup label="Hilton Luxury">
-            <option value="Waldorf Astoria">Waldorf Astoria</option>
-            <option value="Conrad Hotels">Conrad Hotels</option>
-            <option value="LXR Hotels">LXR Hotels & Resorts</option>
-          </optgroup>
-          <optgroup label="Hyatt Luxury">
-            <option value="Park Hyatt">Park Hyatt</option>
-            <option value="Andaz">Andaz</option>
-            <option value="Alila">Alila Hotels</option>
-          </optgroup>
-          <optgroup label="IHG Luxury">
-            <option value="InterContinental">InterContinental</option>
-            <option value="Six Senses">Six Senses</option>
-            <option value="Regent Hotels">Regent Hotels</option>
-          </optgroup>
-          <optgroup label="Accor Luxury">
-            <option value="Fairmont">Fairmont Hotels</option>
-            <option value="Raffles">Raffles Hotels</option>
-            <option value="Sofitel">Sofitel</option>
-            <option value="Banyan Tree">Banyan Tree</option>
-          </optgroup>
-          <optgroup label="Independent">
-            <option value="Independent">Independent Luxury</option>
-            <option value="Aman">Aman Resorts</option>
-            <option value="Four Seasons">Four Seasons</option>
-            <option value="Rosewood">Rosewood Hotels</option>
-          </optgroup>
+        <label>Region</label>
+        <select id="filter-region" onchange="renderSearch()">
+          <option value="all">All Regions</option>
+          <option value="europe">European Union</option>
+          <option value="me">Middle East</option>
+          <option value="sea">Southeast Asia</option>
+          <option value="asia">Greater Asia</option>
         </select>
-        <span class="hint">Hold Ctrl/Cmd to select multiple</span>
       </div>
-
-      <div class="filter-col">
-        <div class="filter-group">
-          <label>Region</label>
-          <select id="filter-region">
-            <option value="">All Regions</option>
-            <option value="European Union">European Union</option>
-            <option value="Middle East">Middle East (UAE, Qatar, Saudi Arabia)</option>
-            <option value="Southeast Asia">Southeast Asia (Thailand, Singapore, Vietnam)</option>
-            <option value="Greater Asia">China / Greater Asia</option>
-            <option value="Global">Global / Other</option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label>Role Type</label>
-          <select id="filter-role">
-            <option value="">All Roles</option>
-            <option value="General Manager">General Manager</option>
-            <option value="Cluster GM">Cluster GM</option>
-            <option value="Pre-Opening GM">Pre-Opening GM ⭐</option>
-            <option value="Resort GM">Resort GM ⭐</option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label>Property Size</label>
-          <select id="filter-size">
-            <option value="">Any Size</option>
-            <option value="boutique">Boutique (under 100 rooms)</option>
-            <option value="midsize">Mid-size (100–250 rooms)</option>
-            <option value="large">Large (250+ rooms)</option>
-          </select>
-        </div>
-
-        <button class="btn-primary full-width" onclick="searchJobs()">
-          <span id="search-btn-text">Search with AI</span>
-        </button>
+      <div class="filter-group">
+        <label>Role Type</label>
+        <select id="filter-role" onchange="renderSearch()">
+          <option value="all">All Roles</option>
+          <option value="gm">General Manager</option>
+          <option value="cluster">Cluster GM</option>
+          <option value="preopening">Pre-Opening GM</option>
+          <option value="resort">Resort GM</option>
+        </select>
       </div>
-
+      <div class="filter-group">
+        <label>Brand Group</label>
+        <select id="filter-brand" onchange="renderSearch()">
+          <option value="all">All Brands</option>
+          <option value="marriott">Marriott Luxury</option>
+          <option value="hilton">Hilton Luxury</option>
+          <option value="hyatt">Hyatt Luxury</option>
+          <option value="ihg">IHG Luxury</option>
+          <option value="accor">Accor Luxury</option>
+          <option value="independent">Independent Luxury</option>
+        </select>
+      </div>
     </div>
   </div>
 
-  <!-- Results -->
-  <div id="search-status" class="status-msg hidden"></div>
-  <div id="search-results" class="results-grid"></div>
+  <!-- Results rendered by JS -->
+  <div id="search-results"></div>
 </section>
 
 
-<!-- ═══════════════════════════════════════════════
+<!-- ══════════════════════════════
      TAB 2: DAILY ALERTS
-═══════════════════════════════════════════════ -->
-<section id="tab-alerts" class="tab-section hidden">
+══════════════════════════════ -->
+<section id="tab-alerts" class="tab-section">
+
   <div class="section-header">
     <h1>Daily Job Alerts</h1>
-    <p>Set up email digests so new luxury GM roles come to you automatically every morning</p>
+    <p>Set these up once — new luxury GM roles will be emailed to you every day automatically</p>
   </div>
 
-  <div class="alerts-grid">
+  <!-- STEP 1: LinkedIn -->
+  <div class="card alert-card">
+    <div class="alert-step-num">Step 1</div>
+    <h3>Set Up LinkedIn Job Alerts <span class="badge badge-green">Recommended · Free</span></h3>
+    <p>LinkedIn is the best source for luxury GM roles globally. You need one alert per search below.</p>
 
-    <div class="card">
-      <h3>📬 How Daily Alerts Work</h3>
-      <p>Since this is a static website, true automated emails require a free third-party service. Below are the two easiest options — no coding needed.</p>
-
-      <div class="alert-option">
-        <div class="alert-option-header">
-          <span class="badge badge-green">Recommended</span>
-          <strong>Option 1: LinkedIn Job Alerts (Free)</strong>
-        </div>
-        <ol>
-          <li>Go to <a href="https://www.linkedin.com/jobs" target="_blank">linkedin.com/jobs</a></li>
-          <li>Search: <code>"General Manager" "luxury" OR "5-star"</code></li>
-          <li>Click <strong>Set Alert</strong> → choose <strong>Daily</strong></li>
-          <li>Repeat for each target region or brand</li>
-        </ol>
-        <div class="copy-box">
-          <div class="copy-label">LinkedIn Search String</div>
-          <code>"General Manager" ("Ritz-Carlton" OR "St. Regis" OR "Waldorf Astoria" OR "Park Hyatt" OR "Six Senses" OR "Fairmont" OR "InterContinental" OR "Four Seasons")</code>
-          <button class="copy-btn" onclick="copyText(this, '&quot;General Manager&quot; (&quot;Ritz-Carlton&quot; OR &quot;St. Regis&quot; OR &quot;Waldorf Astoria&quot; OR &quot;Park Hyatt&quot; OR &quot;Six Senses&quot; OR &quot;Fairmont&quot; OR &quot;InterContinental&quot; OR &quot;Four Seasons&quot;)')">Copy</button>
-        </div>
-      </div>
-
-      <div class="alert-option">
-        <div class="alert-option-header">
-          <span class="badge badge-blue">Advanced</span>
-          <strong>Option 2: Google Alerts (Free, covers brand career pages)</strong>
-        </div>
-        <ol>
-          <li>Go to <a href="https://alerts.google.com" target="_blank">alerts.google.com</a></li>
-          <li>Paste each search below → set frequency to <strong>Once a day</strong> → your email</li>
-          <li>Create one alert per brand group</li>
-        </ol>
-        <div class="google-alerts-list">
-          <div class="copy-box" id="alert1">
-            <div class="copy-label">Marriott Luxury GMs</div>
-            <code>site:careers.marriott.com "General Manager" ("Ritz-Carlton" OR "St. Regis" OR "W Hotels" OR "EDITION" OR "JW Marriott")</code>
-            <button class="copy-btn" onclick="copyFromId('alert1')">Copy</button>
-          </div>
-          <div class="copy-box" id="alert2">
-            <div class="copy-label">Hilton Luxury GMs</div>
-            <code>site:jobs.hilton.com "General Manager" ("Waldorf Astoria" OR "Conrad" OR "LXR")</code>
-            <button class="copy-btn" onclick="copyFromId('alert2')">Copy</button>
-          </div>
-          <div class="copy-box" id="alert3">
-            <div class="copy-label">Hyatt Luxury GMs</div>
-            <code>site:careers.hyatt.com "General Manager" ("Park Hyatt" OR "Andaz" OR "Alila")</code>
-            <button class="copy-btn" onclick="copyFromId('alert3')">Copy</button>
-          </div>
-          <div class="copy-box" id="alert4">
-            <div class="copy-label">IHG + Accor Luxury GMs</div>
-            <code>"General Manager" ("Six Senses" OR "InterContinental" OR "Regent" OR "Fairmont" OR "Raffles" OR "Sofitel")</code>
-            <button class="copy-btn" onclick="copyFromId('alert4')">Copy</button>
-          </div>
-          <div class="copy-box" id="alert5">
-            <div class="copy-label">Independent Luxury GMs</div>
-            <code>"General Manager" ("Four Seasons" OR "Aman" OR "Rosewood" OR "Mandarin Oriental" OR "Belmond") luxury hotel</code>
-            <button class="copy-btn" onclick="copyFromId('alert5')">Copy</button>
-          </div>
-        </div>
-      </div>
+    <div class="alert-how">
+      <strong>How it works:</strong>
+      <ol>
+        <li>Click any search button below — it opens LinkedIn Jobs in a new tab</li>
+        <li>On the LinkedIn results page, click the blue <strong>"Set alert"</strong> toggle (top of results)</li>
+        <li>Choose <strong>Daily</strong> frequency</li>
+        <li>Done — LinkedIn emails you new matches every morning</li>
+      </ol>
     </div>
 
-    <div class="card">
-      <h3>🌐 Direct Career Pages to Bookmark</h3>
-      <p>Check these weekly — many luxury roles are posted here before LinkedIn.</p>
-      <div class="career-links">
-        <a href="https://careers.marriott.com" target="_blank" class="career-link">
-          <span class="career-link-brand">Marriott International</span>
-          <span class="career-link-url">careers.marriott.com →</span>
-        </a>
-        <a href="https://jobs.hilton.com" target="_blank" class="career-link">
-          <span class="career-link-brand">Hilton</span>
-          <span class="career-link-url">jobs.hilton.com →</span>
-        </a>
-        <a href="https://careers.hyatt.com" target="_blank" class="career-link">
-          <span class="career-link-brand">Hyatt</span>
-          <span class="career-link-url">careers.hyatt.com →</span>
-        </a>
-        <a href="https://careers.ihg.com" target="_blank" class="career-link">
-          <span class="career-link-brand">IHG</span>
-          <span class="career-link-url">careers.ihg.com →</span>
-        </a>
-        <a href="https://jobs.accor.com" target="_blank" class="career-link">
-          <span class="career-link-brand">Accor</span>
-          <span class="career-link-url">jobs.accor.com →</span>
-        </a>
-        <a href="https://www.hosco.com/en/jobs" target="_blank" class="career-link">
-          <span class="career-link-brand">HOSCO</span>
-          <span class="career-link-url">hosco.com/jobs →</span>
-        </a>
-        <a href="https://www.catererglobal.com" target="_blank" class="career-link">
-          <span class="career-link-brand">CatererGlobal</span>
-          <span class="career-link-url">catererglobal.com →</span>
-        </a>
-        <a href="https://www.fourseasons.com/careers" target="_blank" class="career-link">
-          <span class="career-link-brand">Four Seasons</span>
-          <span class="career-link-url">fourseasons.com/careers →</span>
-        </a>
-      </div>
-    </div>
+    <div class="alert-searches-grid">
 
+      <div class="alert-group">
+        <div class="alert-group-title">🌍 Europe</div>
+        <button class="alert-search-btn" onclick="openLI('General Manager luxury hotel 5-star','Europe')">All Luxury GM — Europe</button>
+        <button class="alert-search-btn" onclick="openLI('General Manager Ritz-Carlton OR St. Regis','Europe')">Ritz-Carlton / St. Regis — Europe</button>
+        <button class="alert-search-btn" onclick="openLI('General Manager Waldorf Astoria OR Conrad','Europe')">Waldorf Astoria / Conrad — Europe</button>
+        <button class="alert-search-btn" onclick="openLI('General Manager Park Hyatt OR Andaz','Europe')">Park Hyatt / Andaz — Europe</button>
+        <button class="alert-search-btn" onclick="openLI('General Manager Fairmont OR Raffles OR Sofitel','Europe')">Fairmont / Raffles / Sofitel — Europe</button>
+        <button class="alert-search-btn" onclick="openLI('General Manager InterContinental OR Six Senses','Europe')">InterContinental / Six Senses — Europe</button>
+        <button class="alert-search-btn priority-btn" onclick="openLI('pre-opening General Manager luxury hotel','Europe')">⭐ Pre-Opening GM — Europe</button>
+        <button class="alert-search-btn priority-btn" onclick="openLI('Cluster General Manager luxury hotel','Europe')">⭐ Cluster GM — Europe</button>
+      </div>
+
+      <div class="alert-group">
+        <div class="alert-group-title">🌏 Middle East</div>
+        <button class="alert-search-btn" onclick="openLI('General Manager luxury hotel','United Arab Emirates')">All Luxury GM — UAE</button>
+        <button class="alert-search-btn" onclick="openLI('General Manager luxury hotel','Saudi Arabia')">All Luxury GM — Saudi Arabia</button>
+        <button class="alert-search-btn" onclick="openLI('General Manager luxury hotel','Qatar')">All Luxury GM — Qatar</button>
+        <button class="alert-search-btn" onclick="openLI('General Manager Ritz-Carlton OR St. Regis OR Waldorf Astoria','Middle East')">Ritz / St. Regis / Waldorf — ME</button>
+        <button class="alert-search-btn priority-btn" onclick="openLI('pre-opening General Manager luxury hotel','Middle East')">⭐ Pre-Opening GM — Middle East</button>
+        <button class="alert-search-btn priority-btn" onclick="openLI('General Manager luxury resort','United Arab Emirates')">⭐ Resort GM — UAE</button>
+      </div>
+
+      <div class="alert-group">
+        <div class="alert-group-title">🌴 Southeast Asia</div>
+        <button class="alert-search-btn" onclick="openLI('General Manager luxury hotel','Thailand')">All Luxury GM — Thailand</button>
+        <button class="alert-search-btn" onclick="openLI('General Manager luxury hotel','Singapore')">All Luxury GM — Singapore</button>
+        <button class="alert-search-btn" onclick="openLI('General Manager luxury hotel','Vietnam')">All Luxury GM — Vietnam</button>
+        <button class="alert-search-btn" onclick="openLI('General Manager Six Senses OR Alila OR Banyan Tree','Southeast Asia')">Six Senses / Alila / Banyan Tree — SEA</button>
+        <button class="alert-search-btn priority-btn" onclick="openLI('General Manager luxury resort','Thailand')">⭐ Resort GM — Thailand</button>
+        <button class="alert-search-btn priority-btn" onclick="openLI('pre-opening General Manager luxury','Southeast Asia')">⭐ Pre-Opening GM — SEA</button>
+      </div>
+
+      <div class="alert-group">
+        <div class="alert-group-title">🌐 Global</div>
+        <button class="alert-search-btn" onclick="openLI('General Manager luxury hotel 5-star','')">All Luxury GM — Global</button>
+        <button class="alert-search-btn" onclick="openLI('General Manager Four Seasons OR Rosewood OR Aman','')">Four Seasons / Rosewood / Aman</button>
+        <button class="alert-search-btn priority-btn" onclick="openLI('pre-opening General Manager luxury hotel','')">⭐ Pre-Opening GM — Global</button>
+        <button class="alert-search-btn priority-btn" onclick="openLI('Cluster General Manager luxury hotel','')">⭐ Cluster GM — Global</button>
+      </div>
+
+    </div>
   </div>
+
+  <!-- STEP 2: Google Alerts -->
+  <div class="card alert-card">
+    <div class="alert-step-num">Step 2</div>
+    <h3>Set Up Google Alerts <span class="badge badge-blue">Covers brand career pages · Free</span></h3>
+    <p>Google Alerts catches roles posted directly on brand websites that don't appear on LinkedIn. Takes 5 minutes to set up all 5.</p>
+
+    <div class="alert-how">
+      <strong>How it works:</strong>
+      <ol>
+        <li>Click <strong>Open Google Alerts</strong> below</li>
+        <li>Copy one search string into the search box</li>
+        <li>Set <strong>How often:</strong> Once a day &nbsp;|&nbsp; <strong>How many:</strong> All results</li>
+        <li>Enter your email → click <strong>Create Alert</strong></li>
+        <li>Repeat for each string below</li>
+      </ol>
+    </div>
+
+    <a href="https://alerts.google.com" target="_blank" class="btn-primary" style="display:inline-block;margin-bottom:20px">Open Google Alerts →</a>
+
+    <div class="google-alerts-list">
+      <div class="copy-box" id="ga1">
+        <div class="copy-label">Marriott Luxury — GM roles</div>
+        <code>"General Manager" ("Ritz-Carlton" OR "St. Regis" OR "W Hotels" OR "EDITION" OR "JW Marriott") hotel</code>
+        <button class="copy-btn" onclick="copyBox('ga1')">Copy</button>
+      </div>
+      <div class="copy-box" id="ga2">
+        <div class="copy-label">Hilton Luxury — GM roles</div>
+        <code>"General Manager" ("Waldorf Astoria" OR "Conrad Hotels" OR "LXR Hotels") hotel</code>
+        <button class="copy-btn" onclick="copyBox('ga2')">Copy</button>
+      </div>
+      <div class="copy-box" id="ga3">
+        <div class="copy-label">Hyatt + IHG Luxury — GM roles</div>
+        <code>"General Manager" ("Park Hyatt" OR "Andaz" OR "Alila" OR "Six Senses" OR "InterContinental" OR "Regent Hotels")</code>
+        <button class="copy-btn" onclick="copyBox('ga3')">Copy</button>
+      </div>
+      <div class="copy-box" id="ga4">
+        <div class="copy-label">Accor Luxury — GM roles</div>
+        <code>"General Manager" ("Fairmont" OR "Raffles" OR "Sofitel" OR "Banyan Tree") hotel</code>
+        <button class="copy-btn" onclick="copyBox('ga4')">Copy</button>
+      </div>
+      <div class="copy-box" id="ga5">
+        <div class="copy-label">Independent Luxury — GM roles</div>
+        <code>"General Manager" ("Four Seasons" OR "Aman" OR "Rosewood" OR "Mandarin Oriental" OR "Belmond") hotel</code>
+        <button class="copy-btn" onclick="copyBox('ga5')">Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: HOSCO -->
+  <div class="card alert-card">
+    <div class="alert-step-num">Step 3</div>
+    <h3>HOSCO Job Alert <span class="badge" style="background:#f3f4f6;color:#6b7280">Hospitality-specific</span></h3>
+    <p>HOSCO is the largest hospitality-only job platform. Many luxury brands post exclusively here.</p>
+    <ol class="alert-how-list">
+      <li>Click the button below to open HOSCO</li>
+      <li>Create a free account if you don't have one</li>
+      <li>Search <strong>"General Manager"</strong> + filter by Luxury / 5-star</li>
+      <li>Click <strong>Save search</strong> → enable email alerts</li>
+    </ol>
+    <a href="https://www.hosco.com/en/jobs?query=general+manager+luxury&level=executive" target="_blank" class="btn-secondary" style="display:inline-block;margin-top:12px">Open HOSCO →</a>
+  </div>
+
 </section>
 
 
-<!-- ═══════════════════════════════════════════════
+<!-- ══════════════════════════════
      TAB 3: TRACKER
-═══════════════════════════════════════════════ -->
-<section id="tab-tracker" class="tab-section hidden">
+══════════════════════════════ -->
+<section id="tab-tracker" class="tab-section">
   <div class="section-header">
     <h1>Application Tracker</h1>
     <p>Track every application, interview, and follow-up in one place</p>
   </div>
-
   <div class="tracker-toolbar">
     <button class="btn-primary" onclick="openAddModal()">+ Add Application</button>
-    <div class="tracker-filters">
-      <select onchange="filterTracker(this.value)">
-        <option value="all">All Status</option>
-        <option value="Saved">Saved / Wishlist</option>
-        <option value="Applied">Applied</option>
-        <option value="Interview">Interview Scheduled</option>
-        <option value="Offer">Offer Received</option>
-        <option value="Rejected">Rejected</option>
-      </select>
-    </div>
+    <select onchange="filterTracker(this.value)">
+      <option value="all">All Status</option>
+      <option value="Saved">Saved / Wishlist</option>
+      <option value="Applied">Applied</option>
+      <option value="Interview">Interview Scheduled</option>
+      <option value="Offer">Offer Received</option>
+      <option value="Rejected">Rejected</option>
+    </select>
   </div>
-
   <div class="tracker-stats" id="tracker-stats"></div>
-
   <div id="tracker-list" class="tracker-list">
-    <div class="tracker-empty">
-      <div class="empty-icon">📋</div>
-      <p>No applications yet. Add your first one above!</p>
-    </div>
+    <div class="tracker-empty"><div class="empty-icon">📋</div><p>No applications yet. Add your first one above!</p></div>
   </div>
 </section>
 
 
-<!-- ═══════════════════════════════════════════════
+<!-- ══════════════════════════════
      TAB 4: SETTINGS
-═══════════════════════════════════════════════ -->
-<section id="tab-settings" class="tab-section hidden">
-  <div class="section-header">
-    <h1>Settings</h1>
-  </div>
-  <div class="card" style="max-width:500px">
-    <h3>Anthropic API Key</h3>
-    <p>Your key is stored locally in your browser only.</p>
-    <label>API Key</label>
-    <input type="password" id="settings-api-key" placeholder="sk-ant-..." />
-    <button class="btn-primary" style="margin-top:12px" onclick="saveApiKeyFromSettings()">Save Key</button>
-    <div id="settings-key-status" class="hint" style="margin-top:8px"></div>
-
-    <hr style="margin:24px 0; border:none; border-top:1px solid #e5e7eb"/>
+══════════════════════════════ -->
+<section id="tab-settings" class="tab-section">
+  <div class="section-header"><h1>Settings</h1></div>
+  <div class="card" style="max-width:480px">
     <h3>Export Data</h3>
-    <p>Download your application tracker as a JSON backup.</p>
-    <button class="btn-secondary" onclick="exportData()">Export Tracker Data</button>
-
-    <hr style="margin:24px 0; border:none; border-top:1px solid #e5e7eb"/>
+    <p>Download your application tracker as a backup file.</p>
+    <button class="btn-secondary" onclick="exportData()">Export Tracker (.json)</button>
+    <hr style="margin:20px 0;border:none;border-top:1px solid #e5e7eb" />
     <h3>Import Data</h3>
     <p>Restore from a previous export.</p>
     <input type="file" id="import-file" accept=".json" onchange="importData(event)" />
@@ -323,49 +262,33 @@
 
 </main>
 
-<!-- ═══════════════════════════════════════════════
-     ADD / EDIT APPLICATION MODAL
-═══════════════════════════════════════════════ -->
-<div id="app-modal" class="modal-overlay hidden">
+
+<!-- ══════════════════════════════
+     ADD / EDIT MODAL
+══════════════════════════════ -->
+<div id="app-modal" class="modal-overlay" style="display:none">
   <div class="modal modal-wide">
     <div class="modal-header">
       <h2 id="modal-title">Add Application</h2>
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
-
     <div class="modal-form">
       <input type="hidden" id="edit-id" />
-
       <div class="form-row">
-        <div class="form-group">
-          <label>Hotel / Property *</label>
-          <input type="text" id="f-property" placeholder="e.g. The Ritz-Carlton Vienna" />
-        </div>
-        <div class="form-group">
-          <label>Brand *</label>
-          <input type="text" id="f-brand" placeholder="e.g. Ritz-Carlton" />
-        </div>
+        <div class="form-group"><label>Hotel / Property *</label><input type="text" id="f-property" placeholder="e.g. The Ritz-Carlton Vienna" /></div>
+        <div class="form-group"><label>Brand</label><input type="text" id="f-brand" placeholder="e.g. Ritz-Carlton" /></div>
       </div>
-
       <div class="form-row">
-        <div class="form-group">
-          <label>Location *</label>
-          <input type="text" id="f-location" placeholder="e.g. Vienna, Austria" />
-        </div>
-        <div class="form-group">
-          <label>Role Type</label>
+        <div class="form-group"><label>Location</label><input type="text" id="f-location" placeholder="e.g. Vienna, Austria" /></div>
+        <div class="form-group"><label>Role Type</label>
           <select id="f-role">
-            <option>General Manager</option>
-            <option>Cluster GM</option>
-            <option>Pre-Opening GM</option>
-            <option>Resort GM</option>
+            <option>General Manager</option><option>Cluster GM</option>
+            <option>Pre-Opening GM</option><option>Resort GM</option>
           </select>
         </div>
       </div>
-
       <div class="form-row">
-        <div class="form-group">
-          <label>Status</label>
+        <div class="form-group"><label>Status</label>
           <select id="f-status">
             <option value="Saved">Saved / Wishlist</option>
             <option value="Applied">Applied</option>
@@ -374,60 +297,23 @@
             <option value="Rejected">Rejected</option>
           </select>
         </div>
-        <div class="form-group">
-          <label>Date Applied</label>
-          <input type="date" id="f-date" />
-        </div>
+        <div class="form-group"><label>Date Applied</label><input type="date" id="f-date" /></div>
       </div>
-
       <div class="form-row">
-        <div class="form-group">
-          <label>Salary Range</label>
-          <input type="text" id="f-salary" placeholder="e.g. €120k–150k + bonus" />
-        </div>
-        <div class="form-group">
-          <label>Job URL</label>
-          <input type="url" id="f-url" placeholder="https://..." />
-        </div>
+        <div class="form-group"><label>Salary Range</label><input type="text" id="f-salary" placeholder="e.g. €120k–150k + bonus" /></div>
+        <div class="form-group"><label>Job URL</label><input type="url" id="f-url" placeholder="https://..." /></div>
       </div>
-
-      <div class="form-group">
-        <label>Contact / Recruiter</label>
-        <input type="text" id="f-contact" placeholder="e.g. Jane Smith, Korn Ferry — jane@kornferry.com" />
-      </div>
-
-      <div class="form-group">
-        <label>Notes</label>
-        <textarea id="f-notes" rows="3" placeholder="General notes, impressions, deadlines…"></textarea>
-      </div>
-
+      <div class="form-group"><label>Contact / Recruiter</label><input type="text" id="f-contact" placeholder="e.g. Jane Smith, Korn Ferry — jane@kornferry.com" /></div>
+      <div class="form-group"><label>Notes</label><textarea id="f-notes" rows="3" placeholder="General notes, deadlines, impressions…"></textarea></div>
       <div class="form-group interview-section">
         <label>🎯 Interview Preparation Notes</label>
-        <div class="interview-hint">Use this space to prepare: research the property, key talking points, questions to ask, owner background, brand strategy, etc.</div>
-        <textarea id="f-interview" rows="6" placeholder="Property background:&#10;&#10;Key talking points:&#10;- 700% EBITA growth story&#10;- Turnaround methodology&#10;&#10;Questions to ask them:&#10;&#10;Owner / investor background:&#10;&#10;Competitive notes:"></textarea>
+        <div class="interview-hint">Research the property, key talking points, questions to ask, owner background, competitive notes…</div>
+        <textarea id="f-interview" rows="6" placeholder="Property background:&#10;&#10;My key talking points:&#10;- 700% EBITA growth story&#10;- Turnaround methodology&#10;&#10;Questions to ask them:&#10;&#10;Owner / investor background:"></textarea>
       </div>
-
     </div>
-
     <div class="modal-footer">
       <button class="btn-secondary" onclick="closeModal()">Cancel</button>
-      <button class="btn-primary" onclick="saveApplication()">Save Application</button>
-    </div>
-  </div>
-</div>
-
-
-<!-- JOB DETAIL MODAL (from search results) -->
-<div id="job-detail-modal" class="modal-overlay hidden">
-  <div class="modal modal-wide">
-    <div class="modal-header">
-      <h2 id="jd-title">Role Details</h2>
-      <button class="modal-close" onclick="closeJobDetail()">✕</button>
-    </div>
-    <div id="jd-body" class="modal-form"></div>
-    <div class="modal-footer">
-      <button class="btn-secondary" onclick="closeJobDetail()">Close</button>
-      <button class="btn-primary" onclick="addToTrackerFromSearch()">+ Add to Tracker</button>
+      <button class="btn-primary" onclick="saveApplication()">Save</button>
     </div>
   </div>
 </div>
